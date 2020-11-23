@@ -60,8 +60,10 @@ const CryptoPriceChart = (props) => {
                 to: props.to
             })
             .then(res => {
-                console.log('Data fetched: ' + res);
-                setChartData(res.data);
+                console.log('Data fetched: ', res);
+                let data = [];
+                res.data.forEach(price => data.push({t: price['timestamp'], y: price['last_price']}));
+                setChartData(data);
             })
             .catch(err => console.error('Failed to fetch data: ' + err));
     }

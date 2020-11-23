@@ -85776,8 +85776,15 @@ var CryptoPriceChart = function CryptoPriceChart(props) {
       from: props.from,
       to: props.to
     }).then(function (res) {
-      console.log('Data fetched: ' + res);
-      setChartData(res.data);
+      console.log('Data fetched: ', res);
+      var data = [];
+      res.data.forEach(function (price) {
+        return data.push({
+          t: price['timestamp'],
+          y: price['last_price']
+        });
+      });
+      setChartData(data);
     })["catch"](function (err) {
       return console.error('Failed to fetch data: ' + err);
     });
