@@ -1,11 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import CryptoPriceChart from "./components/CryptoPriceChart";
 
 const ReactApp = () => {
     return (
-        <div className="container">
-            It's working
-        </div>
+        <CryptoPriceChart from="BTC" to="USD" />
     );
 }
 
