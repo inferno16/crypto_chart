@@ -53,19 +53,18 @@ class TickerFetch extends Command
         // Verify is disabled for testing (I don't want to setup SSL locally)
         $client = new Client(['verify' => false]);
         // Fetch all to prevent multiple calls to the database
-        $availableCurrencies = Currency::all()->toArray();
+        $availableCurrencies = Currency::all();
+
         // Make assoc array iso_code => id
-        $availableCurrencies = array_combine(
-            array_column($availableCurrencies, 'iso_code'),
-            array_column($availableCurrencies, 'id')
-        );
+        $availableCurrencies = $availableCurrencies->pluck('id', 'iso_code');
+
         $pricesTable = DB::table('prices');
         foreach (self::$variations as $variation) {
-            if (count(array_intersect($variation, array_keys($availableCurrencies))) < 2) {
+            [$from, $to] = $variation;
+            if (!$availableCurrencies->has($from) || !$availableCurrencies->has($to)) {
                 throw new RuntimeException('Unsupported currencies: ' . json_encode($variation, JSON_THROW_ON_ERROR));
             }
 
-            [$from, $to] = $variation;
 
             $responseBody = $client->get(self::$tickerUrl . $from . $to)
                 ->getBody()

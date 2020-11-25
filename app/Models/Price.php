@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method static Builder getByCurrencies($from, $to)
+ * @see Price::scopeGetByCurrencies()
+ */
 class Price extends Model
 {
     use HasFactory;
@@ -23,21 +27,22 @@ class Price extends Model
     }
 
     /**
+     * @param Builder $query
      * @param string $from
      * @param string $to
      * @return Builder
      */
-    static function getByCurrencies($from, $to)
+    function scopeGetByCurrencies($query, $from, $to)
     {
-        return self::whereHas(
+        return $query->whereHas(
             'from',
-            static function ($q) use ($from) {
+            static function (Builder $q) use ($from) {
                 $q->where('iso_code', '=', $from);
             }
         )
         ->whereHas(
             'to',
-            static function ($q) use ($to) {
+            static function (Builder $q) use ($to) {
                 $q->where('iso_code', '=', $to);
             }
         );
